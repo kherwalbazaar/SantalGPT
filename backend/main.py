@@ -14,7 +14,11 @@ from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
 # Replace with your actual API Key from https://aistudio.google.com/
-load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+# Try to load from .env file in the backend directory
+env_path = os.path.join(os.path.dirname(__file__), ".env")
+if os.path.exists(env_path):
+    load_dotenv(env_path)
+
 API_KEY = os.getenv("GOOGLE_AI_API_KEY", "YOUR_GOOGLE_AI_STUDIO_API_KEY")
 genai.configure(api_key=API_KEY)
 
