@@ -12,6 +12,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [editValue, setEditValue] = useState(undefined);
   const [editingMessageTimestamp, setEditingMessageTimestamp] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const {
     currentChat,
     addMessage,
@@ -22,9 +23,14 @@ function App() {
     getRecentChats,
   } = useChatHistory();
 
+  // Set initialized state after hook loads
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
+
   // API Configuration
   // Use relative `/api` calls in production, or override with VITE_API_URL for local/testing
-  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+  const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
 
   const handleEditMessage = (messageTimestamp, newContent) => {
     editMessage(messageTimestamp, newContent);
@@ -103,6 +109,18 @@ function App() {
     ];
     return responses[Math.floor(Math.random() * responses.length)];
   };
+
+  // Don't render until initialized
+  if (!isInitialized) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-cream">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ScriptProvider>
