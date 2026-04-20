@@ -3,7 +3,7 @@ import MessageBubble from './MessageBubble';
 import { useScript } from '../context/ScriptContext';
 import { MessageCircle } from 'lucide-react';
 
-export default function ChatContainer({ messages, isLoading, onEditMessage }) {
+export default function ChatContainer({ messages, isLoading, onEditMessage, onEditMessageContent, onSuggestionClick }) {
   const { scriptMode } = useScript();
   const messagesEndRef = useRef(null);
 
@@ -23,11 +23,11 @@ export default function ChatContainer({ messages, isLoading, onEditMessage }) {
           
           <div className="space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-earthyGreen font-olChiki">
-              {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲᱜᱤᱯᱤᱴᱤ ᱨᱮ ᱥᱟᱹᱜᱩᱱ' : 'Welcome to SantalGPT'}
+              {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲᱜᱤᱯᱤᱴᱤ ᱨᱮ ᱥᱟᱹᱜᱩᱱ ᱫᱟᱨᱟᱢ' : 'Welcome to SantalGPT'}
             </h2>
             <p className="text-gray-600 max-w-md font-olChiki">
               {scriptMode === 'olchiki'
-                ? 'ᱟᱯᱱᱟᱨ ᱫᱚ ᱥᱟᱱᱛᱟᱲ ᱥᱟᱶᱛᱟ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱮ᱁ᱟᱭᱤ ᱾ ᱤᱧ ᱟᱯᱱᱟᱨ ᱪᱮᱫ ᱜᱚᱲᱚ ᱫᱟᱲᱮᱭᱟᱜ ᱟ?'
+                ? 'ᱟᱯᱱᱟᱨ ᱫᱚ ᱥᱟᱱᱛᱟᱲ ᱥᱟᱶᱛᱟ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱮᱟᱭᱤ ᱾ ᱤᱧ ᱟᱯᱱᱟᱨ ᱪᱮᱫ ᱜᱚᱲᱚ ᱫᱟᱲᱮᱭᱟᱜ ᱟ?'
                 : 'I am an AI for the Santali community. How can I assist you today?'}
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage }) {
                 latin: 'What is Ol Chiki script?',
               },
               {
-                ol: 'ᱥᱟᱱᱛᱟᱲᱤ ᱯᱟᱹᱨᱥᱤ ᱥᱤᱠᱱᱟᱹᱛ',
+                ol: 'ᱥᱟᱱᱛᱟᱲᱤ ᱯᱟṹᱨᱥᱤ ᱥᱤᱠᱱᱟᱹᱛ',
                 latin: 'Learn Santali language',
               },
               {
@@ -53,6 +53,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage }) {
             ].map((suggestion, index) => (
               <div
                 key={index}
+                onClick={() => onSuggestionClick && onSuggestionClick(scriptMode === 'olchiki' ? suggestion.ol : suggestion.latin)}
                 className="p-4 bg-white border border-earthyGreen/20 rounded-xl hover:border-earthyGreen/40 hover:shadow-md transition-all cursor-pointer"
               >
                 <p className="text-sm text-gray-700 font-olChiki">
@@ -66,7 +67,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage }) {
         // Messages List
         <>
           {messages.map((message, index) => (
-            <MessageBubble key={index} message={message} onEdit={onEditMessage} />
+            <MessageBubble key={index} message={message} onEdit={onEditMessage} onEditMessageContent={onEditMessageContent} />
           ))}
           
           {isLoading && (

@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 
-export default function MessageBubble({ message, onEdit }) {
+export default function MessageBubble({ message, onEdit, onEditMessage }) {
   const isUser = message.role === 'user';
   const [showEditMenu, setShowEditMenu] = useState(false);
   const [editText, setEditText] = useState(message.content);
@@ -59,7 +59,9 @@ export default function MessageBubble({ message, onEdit }) {
   };
 
   const handleStartEdit = () => {
-    setIsEditing(true);
+    if (onEditMessage) {
+      onEditMessage(message.content, message.timestamp);
+    }
     setShowEditMenu(false);
     setShowHoverMenu(false);
   };
@@ -90,7 +92,7 @@ export default function MessageBubble({ message, onEdit }) {
         ref={messageRef}
       >
         <div
-          className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-3 shadow-sm relative ${
+          className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-1 shadow-sm relative ${
             isUser
               ? 'bg-white border-2 border-terracotta rounded-br-md'
               : 'bg-earthyGreen text-white rounded-bl-md'
@@ -151,9 +153,7 @@ export default function MessageBubble({ message, onEdit }) {
                 
                 {isUser && !('ontouchstart' in window) && (
                   <div
-                    className={`flex items-center gap-1 ml-1 transition-all duration-200 ${
-                      showHoverMenu ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
+                    className="flex items-center gap-1 ml-1 transition-all duration-200 opacity-100"
                   >
                     <button
                       onClick={(e) => {

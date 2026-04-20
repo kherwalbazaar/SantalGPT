@@ -20,13 +20,16 @@ export default function Header({ onToggleSidebar }) {
               <Menu className="w-5 h-5 text-earthyGreen" />
             </button>
             
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-earthyGreen rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">ᱥ</span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-earthyGreen rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-xl">ᱥ</span>
+                </div>
+                <h1 className="text-xl md:text-2xl font-bold text-earthyGreen font-olChiki -mt-4">
+                  SantalGPT
+                </h1>
               </div>
-              <h1 className="text-xl md:text-2xl font-bold text-earthyGreen font-olChiki">
-                SantalGPT
-              </h1>
+              <p className="text-xs text-gray-500 -mt-5 ml-12">Santali Open AI</p>
             </div>
           </div>
 

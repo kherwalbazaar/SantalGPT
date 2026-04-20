@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
               {scriptMode === 'olchiki' ? 'ᱥᱮᱫᱟᱭ ᱜᱟᱞᱢᱟᱨᱟᱣ' : 'Recent History'}
             </h3>
             
-            <div className="space-y-2">
+            <div className="space-y-0">
               {chatHistory.map((chat) => (
                 <div
                   key={chat.id}
