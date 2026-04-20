@@ -29,7 +29,7 @@ export default function Header({ onToggleSidebar }) {
                   SantalGPT
                 </h1>
               </div>
-              <p className="text-xs text-gray-500 -mt-5 ml-12">Santali Open AI</p>
+              <p className="text-xs text-gray-500 -mt-5 ml-12">Brain of Santal</p>
             </div>
           </div>
 
