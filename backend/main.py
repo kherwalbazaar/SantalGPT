@@ -13,13 +13,15 @@ from dotenv import load_dotenv
 # import faiss
 
 # --- CONFIGURATION ---
-# Replace with your actual API Key from https://aistudio.google.com/
-# Try to load from .env file in the backend directory
+# Try to load from .env file in the backend directory (for local development)
 env_path = os.path.join(os.path.dirname(__file__), ".env")
 if os.path.exists(env_path):
     load_dotenv(env_path)
 
-API_KEY = os.getenv("GOOGLE_AI_API_KEY", "YOUR_GOOGLE_AI_STUDIO_API_KEY")
+# Use SantaliGPT environment variable from Vercel or fallback to GOOGLE_AI_API_KEY for local dev
+API_KEY = os.getenv("SantaliGPT") or os.getenv("GOOGLE_AI_API_KEY", "YOUR_GOOGLE_AI_STUDIO_API_KEY")
+
+# Configure Google AI with the API key
 genai.configure(api_key=API_KEY)
 
 app = FastAPI(title="SantalGPT API")
@@ -175,13 +177,13 @@ def home():
         "model": "gemini-1.5-flash"
     }
 
-@app.post("/upload-document")
+@app.post("/api/upload-document")
 async def upload_document(file: UploadFile = File(...)):
     """Upload a document (PDF or text) for RAG"""
     try:
         # Read file content
         content = await file.read()
-        
+
         # Process based on file type
         if file.filename.endswith('.pdf'):
             text = extract_text_from_pdf(content)
@@ -189,10 +191,10 @@ async def upload_document(file: UploadFile = File(...)):
             text = content.decode('utf-8')
         else:
             raise HTTPException(status_code=400, detail="Unsupported file type. Please upload PDF or TXT files.")
-        
+
         # Add to RAG system
         add_document_to_rag(text, file.filename)
-        
+
         return {
             "status": "success",
             "message": f"Document '{file.filename}' uploaded and processed successfully",
@@ -201,26 +203,26 @@ async def upload_document(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/chat")
+@app.post("/api/chat")
 async def chat_with_ai(request: ChatRequest):
     try:
         # Retrieve relevant context if RAG is enabled and documents exist
         context = ""
         if request.use_rag and len(documents) > 0:
             context = retrieve_relevant_context(request.message)
-        
+
         # Start a chat session with optional history
         chat = model.start_chat(history=request.history)
-        
+
         # Build message with context if available
         if context:
             full_message = f"{system_instruction}\n\nContext from uploaded documents:\n{context}\n\nUser: {request.message}"
         else:
             full_message = f"{system_instruction}\n\nUser: {request.message}"
-        
+
         # Send the user's message to Gemini
         response = chat.send_message(full_message)
-        
+
         return {
             "status": "success",
             "reply": response.text,
@@ -230,7 +232,7 @@ async def chat_with_ai(request: ChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/health")
+@app.get("/api/health")
 def health_check():
     """Health check endpoint"""
     return {
@@ -241,7 +243,30 @@ def health_check():
         "documents_loaded": len(documents)
     }
 
-@app.get("/documents")
+@app.get("/api/key-check")
+def key_check():
+    """
+    Verify that the API key is loaded without exposing the actual key.
+    This endpoint is safe to call from the frontend as it only returns
+    whether the key is configured, not the key itself.
+    """
+    is_configured = API_KEY != "YOUR_GOOGLE_AI_STUDIO_API_KEY" and API_KEY is not None and len(API_KEY) > 0
+
+    # Return masked version for verification (first 3 chars + **** + last 4 chars)
+    if is_configured and len(API_KEY) > 7:
+        masked_key = f"{API_KEY[:3]}{'*' * (len(API_KEY) - 7)}{API_KEY[-4:]}"
+    else:
+        masked_key = None
+
+    return {
+        "status": "success",
+        "api_configured": is_configured,
+        "key_source": "SantaliGPT" if os.getenv("SantaliGPT") else ("GOOGLE_AI_API_KEY" if os.getenv("GOOGLE_AI_API_KEY") else "None"),
+        "key_masked": masked_key,
+        "message": "API key is securely configured" if is_configured else "API key is not configured"
+    }
+
+@app.get("/api/documents")
 def list_documents():
     """List all uploaded documents"""
     unique_docs = {}
@@ -249,17 +274,17 @@ def list_documents():
         filename = meta["filename"]
         if filename not in unique_docs:
             unique_docs[filename] = meta["chunk_count"]
-    
+
     return {
         "documents": unique_docs,
         "total_chunks": len(documents)
     }
 
-@app.delete("/documents")
+@app.delete("/api/documents")
 def clear_documents():
     """Clear all uploaded documents"""
     global documents, document_metadata, index
-    
+
     if embedding_model is not None:
         try:
             import faiss
@@ -267,10 +292,10 @@ def clear_documents():
             index = faiss.IndexFlatL2(384)
         except ImportError:
             index = None
-    
+
     documents = []
     document_metadata = []
-    
+
     return {
         "status": "success",
         "message": "All documents cleared"

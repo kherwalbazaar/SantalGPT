@@ -23,7 +23,8 @@ function App() {
   } = useChatHistory();
 
   // API Configuration
-  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  // Use relative `/api` calls in production, or override with VITE_API_URL for local/testing
+  const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
   const handleEditMessage = (messageTimestamp, newContent) => {
     editMessage(messageTimestamp, newContent);
@@ -52,7 +53,7 @@ function App() {
 
     try {
       // Send message to backend API
-      const response = await fetch(`${API_BASE_URL}/chat`, {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
