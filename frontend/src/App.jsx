@@ -77,38 +77,19 @@ function App() {
 
       const data = await response.json();
       
+      if (!data.reply) {
+        throw new Error('No reply from server');
+      }
+      
       // Add AI response
       addMessage('ai', data.reply);
     } catch (error) {
       console.error('Error communicating with AI:', error);
-      // Fallback to mock response if API fails
-      const mockResponse = generateMockResponse(message);
-      addMessage('ai', mockResponse);
+      // Fallback response when API is not working
+      addMessage('ai', 'ᱤᱠᱟᱹ ᱠᱟᱹᱧ ᱢᱮ, ᱤᱧ ᱱᱤᱛᱚᱜ ᱠᱟᱹᱢᱤ ᱨᱮ ᱢᱤᱱᱟᱹᱧᱟ, ᱛᱷᱚᱲᱟ ᱜᱷᱟᱹᱲᱤᱡ ᱛᱟᱭᱚᱢ ᱟᱨᱦᱚᱸ ᱨᱚᱲ ᱢᱮ');
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Mock AI response generator
-  const generateMockResponse = (userMessage) => {
-    const message = userMessage.toLowerCase().trim();
-    
-    // Detect greetings
-    const greetings = ['hi', 'hello', 'hlo', 'hii', 'hii', 'hey', 'hola', 'namaste', 'joaar', 'johar'];
-    const isGreeting = greetings.some(greeting => message === greeting || message.startsWith(greeting + ' '));
-    
-    if (isGreeting) {
-      return "How can I help you today? 😊";
-    }
-    
-    // Other contextual responses
-    const responses = [
-      "ᱱᱚᱣᱟ ᱫᱚ ᱵᱟᱹᱲᱛᱤ ᱜᱟᱱ ᱜᱚᱲᱚ ᱠᱟᱱᱟ ᱾ ᱤᱧ ᱟᱯᱱᱟᱨ ᱟᱨᱦᱚᱸ ᱜᱚᱲᱚ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ!",
-      "ᱥᱟᱱᱛᱟᱲᱤ ᱯᱟᱹᱨᱥᱤ ᱫᱚ ᱟᱹᱰᱤ ᱢᱟᱨᱮ ᱟᱨ ᱥᱚᱨᱮᱥ ᱠᱟᱱᱟ ᱾",
-      "ᱚᱞ ᱪᱤᱠᱤ ᱫᱚ ᱨᱚᱜᱷᱩᱱᱟᱛᱷ ᱢᱩᱨᱢᱩ ᱛᱮᱭᱟᱨ ᱞᱮᱫᱼᱟ ᱑᱙᱒᱕ ᱥᱟᱹᱦᱤᱛ ᱨᱮ ᱾",
-      "ᱤᱧ ᱟᱯᱱᱟᱨ ᱥᱟᱱᱛᱟᱲ ᱥᱟᱶᱛᱟ ᱵᱟᱵᱚᱫᱽ ᱛᱮ ᱠᱩᱠᱞᱤ ᱚᱞ ᱫᱟᱲᱮᱭᱟᱜᱼᱟ ᱾",
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   // Don't render until initialized
