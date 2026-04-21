@@ -12,8 +12,24 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Get today's date
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+
   return (
     <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 lg:px-12">
+      {/* Date Display */}
+      {messages.length > 0 && (
+        <div className="text-center mb-6">
+          <span className="inline-block px-4 py-2 bg-white/50 backdrop-blur-sm rounded-full text-sm text-gray-600 font-olChiki shadow-sm">
+            {today}
+          </span>
+        </div>
+      )}
       {messages.length === 0 ? (
         // Welcome Screen
         <div className="flex flex-col items-center justify-center h-full text-center space-y-6">

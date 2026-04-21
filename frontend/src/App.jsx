@@ -29,8 +29,9 @@ function App() {
   }, []);
 
   // API Configuration
-  // Use relative `/api` calls in production, or override with VITE_API_URL for local/testing
-  const API_BASE_URL = import.meta.env.VITE_API_URL || window.location.origin;
+  // Use localhost:8000 for development, relative paths for production
+  // VITE_API_URL can be set to override for testing
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const handleEditMessage = (messageTimestamp, newContent) => {
     editMessage(messageTimestamp, newContent);
@@ -59,7 +60,7 @@ function App() {
 
     try {
       // Send message to backend API
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

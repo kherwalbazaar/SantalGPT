@@ -1,4 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { ThumbsUp, ThumbsDown, Copy } from 'lucide-react';
+
+const LIKES_STORAGE_KEY = 'santalgpt_message_likes';
 
 export default function MessageBubble({ message, onEdit, onEditMessage }) {
   const isUser = message.role === 'user';
@@ -6,8 +9,44 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
   const [editText, setEditText] = useState(message.content);
   const [isEditing, setIsEditing] = useState(false);
   const [showHoverMenu, setShowHoverMenu] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [disliked, setDisliked] = useState(false);
   const pressTimer = useRef(null);
   const messageRef = useRef(null);
+
+  // Load like/dislike state from localStorage
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem(LIKES_STORAGE_KEY);
+      if (storedLikes) {
+        const likesData = JSON.parse(storedLikes);
+        const messageId = message.timestamp;
+        setLiked(likesData[messageId] === 'liked');
+        setDisliked(likesData[messageId] === 'disliked');
+      }
+    } catch (error) {
+      console.error('Error loading likes from localStorage:', error);
+    }
+  }, [message.timestamp]);
+
+  // Save like/dislike state to localStorage
+  const saveLikeState = (state) => {
+    try {
+      const storedLikes = localStorage.getItem(LIKES_STORAGE_KEY);
+      const likesData = storedLikes ? JSON.parse(storedLikes) : {};
+      const messageId = message.timestamp;
+      
+      if (state === 'none') {
+        delete likesData[messageId];
+      } else {
+        likesData[messageId] = state;
+      }
+      
+      localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
+    } catch (error) {
+      console.error('Error saving likes to localStorage:', error);
+    }
+  };
 
   const timestamp = new Date(message.timestamp).toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -80,6 +119,20 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
     }
   };
 
+  const handleLike = () => {
+    const newLikedState = !liked;
+    setLiked(newLikedState);
+    if (disliked) setDisliked(false);
+    saveLikeState(newLikedState ? 'liked' : disliked ? 'disliked' : 'none');
+  };
+
+  const handleDislike = () => {
+    const newDislikedState = !disliked;
+    setDisliked(newDislikedState);
+    if (liked) setLiked(false);
+    saveLikeState(newDislikedState ? 'disliked' : liked ? 'liked' : 'none');
+  };
+
   return (
     <>
       <div
@@ -92,10 +145,10 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
         ref={messageRef}
       >
         <div
-          className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-1 shadow-sm relative ${
+          className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-1 shadow-md relative ${
             isUser
-              ? 'bg-white border-2 border-terracotta rounded-br-md'
-              : 'bg-earthyGreen text-white rounded-bl-md'
+              ? 'bg-gray-50 rounded-br-md'
+              : 'bg-gray-100 rounded-bl-md'
           } ${isUser && !('ontouchstart' in window) ? 'cursor-default' : ''}`}
         >
           {isEditing ? (
@@ -136,47 +189,70 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
           ) : (
             <>
               <div className={`text-sm md:text-base leading-relaxed font-olChiki ${
-                isUser ? 'text-gray-800' : 'text-white'
+                isUser ? 'text-gray-800' : 'text-gray-900'
               }`}>
                 {message.content}
               </div>
               
-              <div
-                className={`text-xs mt-2 flex items-center gap-2 ${
-                  isUser ? 'text-gray-500' : 'text-white/70'
-                }`}
-              >
-                <span>{timestamp}</span>
-                {isUser && message.edited && (
-                  <span className="text-gray-400">(edited)</span>
-                )}
-                
-                {isUser && !('ontouchstart' in window) && (
-                  <div
-                    className="flex items-center gap-1 ml-1 transition-all duration-200 opacity-100"
+              {/* Action Buttons with Timestamp */}
+              <div className="flex items-center justify-between mt-2 gap-2">
+                <div
+                  className={`text-xs flex items-center gap-2 ${
+                    isUser ? 'text-gray-500' : 'text-white/70'
+                  }`}
+                >
+                  <span>{timestamp}</span>
+                  {isUser && message.edited && (
+                    <span className="text-gray-400">(edited)</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {!isUser && (
+                    <>
+                      <button
+                        onClick={handleLike}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
+                          liked
+                            ? 'bg-green-100 text-green-600'
+                            : 'text-gray-400 hover:text-green-600 hover:bg-gray-100'
+                        }`}
+                        title="Like"
+                      >
+                        <ThumbsUp size={14} />
+                      </button>
+                      <button
+                        onClick={handleDislike}
+                        className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors ${
+                          disliked
+                            ? 'bg-red-100 text-red-600'
+                            : 'text-gray-400 hover:text-red-600 hover:bg-gray-100'
+                        }`}
+                        title="Dislike"
+                      >
+                        <ThumbsDown size={14} />
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={handleCopyMessage}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors text-gray-400 hover:text-terracotta hover:bg-gray-100`}
+                    title="Copy"
                   >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCopyMessage();
-                      }}
-                      className="text-gray-500 hover:text-terracotta transition-colors p-0.5"
-                      title="Copy message"
-                    >
-                      📋
-                    </button>
+                    <Copy size={14} />
+                  </button>
+                  {isUser && !('ontouchstart' in window) && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleStartEdit();
                       }}
-                      className="text-gray-500 hover:text-terracotta transition-colors p-0.5"
+                      className="text-gray-400 hover:text-terracotta hover:bg-gray-100 px-2 py-1 rounded-md transition-colors"
                       title="Edit message"
                     >
                       ✏️
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </>
           )}
