@@ -1,4 +1,4 @@
-import { Menu, ToggleLeft, ToggleRight, Info, X } from 'lucide-react';
+import { Menu, ToggleLeft, ToggleRight, Info, X, Brain } from 'lucide-react';
 import { useScript } from '../context/ScriptContext';
 import { useState } from 'react';
 
@@ -22,8 +22,8 @@ export default function Header({ onToggleSidebar }) {
             
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-earthyGreen rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">ᱥ</span>
+                <div className="w-10 h-10 flex items-center justify-center">
+                  <img src="/santal-gpt.png" alt="SantalGPT" className="w-10 h-10 object-contain rounded-lg" />
                 </div>
                 <h1 className="text-xl md:text-2xl font-bold text-earthyGreen font-olChiki -mt-4">
                   SantalGPT

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { X } from 'lucide-react';
 import { ScriptProvider } from './context/ScriptContext';
 import useChatHistory from './hooks/useChatHistory';
 import BackgroundPattern from './components/BackgroundPattern';
@@ -15,6 +16,41 @@ function App() {
   const [editingMessageTimestamp, setEditingMessageTimestamp] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+
+  // PWA Install Prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+      setShowInstallPrompt(false);
+    }
+  };
   const {
     currentChat,
     addMessage,
@@ -145,6 +181,33 @@ function App() {
             </>
           )}
         </div>
+
+        {/* PWA Install Prompt */}
+        {showInstallPrompt && (
+          <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white rounded-xl shadow-2xl p-4 z-50 border border-earthyGreen/20">
+            <div className="flex items-start gap-3">
+              <img src="/santal-gpt.png" alt="SantalGPT" className="w-12 h-12 rounded-lg" />
+              <div className="flex-1">
+                <h3 className="font-semibold text-earthyGreen font-olChiki">Install SantalGPT</h3>
+                <p className="text-sm text-gray-600 font-olChiki mt-1">
+                  Install app for better experience
+                </p>
+              </div>
+              <button
+                onClick={() => setShowInstallPrompt(false)}
+                className="text-gray-400 hover:text-gray-600 p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <button
+              onClick={handleInstallClick}
+              className="w-full mt-3 bg-earthyGreen text-white py-2 rounded-lg font-olChiki hover:bg-earthyGreen/90 transition-colors"
+            >
+              Install
+            </button>
+          </div>
+        )}
       </div>
     </ScriptProvider>
   );
