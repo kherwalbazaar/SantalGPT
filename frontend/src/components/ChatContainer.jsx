@@ -21,7 +21,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
   });
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 lg:px-12">
+    <div className="flex-1 overflow-y-auto px-4 py-6 pb-24 md:px-8 md:pb-6 lg:px-12 lg:pb-6">
       {/* Date Display */}
       {messages.length > 0 && (
         <div className="text-center mb-6">

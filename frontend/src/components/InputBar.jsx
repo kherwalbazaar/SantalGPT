@@ -110,7 +110,7 @@ export default function InputBar({ onSendMessage, initialValue }) {
   };
 
   return (
-    <div className="sticky bottom-0 z-40 bg-cream border-t border-earthyGreen/10 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-cream border-t border-earthyGreen/10 shadow-lg md:sticky md:relative">
       <div className="max-w-4xl mx-auto px-4 py-4 md:px-8">
         <div className="flex items-end gap-2 md:gap-3">
           {/* Plus Button with Dropdown Menu */}
