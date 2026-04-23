@@ -3,7 +3,7 @@ import { Plus, Trash2, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lu
 import { useScript } from '../context/ScriptContext';
 import { learningResources, categories } from '../data/learningResources';
 
-export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, onSelectChat, onDeleteChat, onNewChat }) {
+export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, onSelectChat, onDeleteChat, onNewChat, onAboutClick, onHomeClick }) {
   const { scriptMode } = useScript();
   const [showResources, setShowResources] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
@@ -32,7 +32,7 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
         <div className="p-4 border-b border-earthyGreen/10">
           <button
             onClick={() => {
-              onNewChat();
+              onHomeClick();
               onClose();
             }}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-earthyGreen text-white rounded-xl hover:bg-earthyGreen/90 transition-colors font-olChiki"
@@ -42,44 +42,32 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
           </button>
         </div>
 
-        {/* Recent History */}
+        {/* About Us Section */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4">
             <h3 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-              {scriptMode === 'olchiki' ? 'ᱞᱟᱦᱟ ᱛᱮᱱᱟᱜ ᱜᱟᱞᱢᱟᱨᱟᱣ' : 'Recent History'}
+              {scriptMode === 'olchiki' ? 'ᱟᱹᱣᱛᱟᱱ' : 'About'}
             </h3>
             
-            <div className="space-y-0">
-              {chatHistory.map((chat) => (
-                <div
-                  key={chat.id}
-                  className={`group flex items-center gap-2 p-3 rounded-lg cursor-pointer transition-colors ${
-                    chat.id === currentChatId
-                      ? 'bg-earthyGreen/10 border border-earthyGreen/30'
-                      : 'hover:bg-gray-50 border border-transparent'
-                  }`}
-                  onClick={() => {
-                    onSelectChat(chat.id);
-                    onClose();
-                  }}
-                >
-                  <BookOpen className="w-4 h-4 text-earthyGreen flex-shrink-0" />
-                  <p className="flex-1 text-sm text-gray-700 truncate font-olChiki">
-                    {chat.title}
-                  </p>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteChat(chat.id);
-                    }}
-                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded transition-all"
-                    aria-label="Delete chat"
-                  >
-                    <Trash2 className="w-4 h-4 text-red-500" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <button
+              onClick={() => {
+                onAboutClick();
+                onClose();
+              }}
+              className="w-full flex items-center gap-3 p-4 rounded-lg bg-earthyGreen/10 border border-earthyGreen/30 hover:bg-earthyGreen/20 transition-colors"
+            >
+              <div className="w-10 h-10 bg-earthyGreen rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-white font-bold text-lg">ᱥ</span>
+              </div>
+              <div className="text-left">
+                <p className="font-medium text-earthyGreen font-olChiki">
+                  {scriptMode === 'olchiki' ? 'ᱟᱢᱟᱸᱨ ᱵᱟᱵᱚᱛ' : 'About Us'}
+                </p>
+                <p className="text-xs text-gray-600 font-olChiki">
+                  {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲGPT ᱵᱟᱵᱚᱛ ᱛᱮᱫ' : 'Know about SantalGPT'}
+                </p>
+              </div>
+            </button>
           </div>
 
           {/* Learning Resources Section */}

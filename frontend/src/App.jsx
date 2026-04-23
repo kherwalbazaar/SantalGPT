@@ -6,6 +6,7 @@ import Header from './components/Header';
 import ChatContainer from './components/ChatContainer';
 import InputBar from './components/InputBar';
 import Sidebar from './components/Sidebar';
+import AboutUs from './components/AboutUs';
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -13,6 +14,7 @@ function App() {
   const [editValue, setEditValue] = useState(undefined);
   const [editingMessageTimestamp, setEditingMessageTimestamp] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const {
     currentChat,
     addMessage,
@@ -115,25 +117,33 @@ function App() {
           onSelectChat={loadChat}
           onDeleteChat={deleteChat}
           onNewChat={createNewChat}
+          onAboutClick={() => setShowAbout(true)}
+          onHomeClick={() => setShowAbout(false)}
         />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
           <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
           
-          <div className="flex-1 overflow-y-auto">
-            <div className="max-w-4xl mx-auto p-4">
-              <ChatContainer
-                messages={currentChat?.messages || []}
-                isLoading={isLoading}
-                onEditMessage={handleEditMessage}
-                onEditMessageContent={handleEditMessageContent}
-                onSuggestionClick={handleSuggestionClick}
-              />
-            </div>
-          </div>
-          
-          <InputBar onSendMessage={handleSendMessage} initialValue={editValue} />
+          {showAbout ? (
+            <AboutUs onBack={() => setShowAbout(false)} />
+          ) : (
+            <>
+              <div className="flex-1 overflow-y-auto">
+                <div className="max-w-4xl mx-auto p-4">
+                  <ChatContainer
+                    messages={currentChat?.messages || []}
+                    isLoading={isLoading}
+                    onEditMessage={handleEditMessage}
+                    onEditMessageContent={handleEditMessageContent}
+                    onSuggestionClick={handleSuggestionClick}
+                  />
+                </div>
+              </div>
+              
+              <InputBar onSendMessage={handleSendMessage} initialValue={editValue} />
+            </>
+          )}
         </div>
       </div>
     </ScriptProvider>
