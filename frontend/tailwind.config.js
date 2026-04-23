@@ -9,7 +9,7 @@ export default {
       colors: {
         earthyGreen: '#2D5A27',
         terracotta: '#C05A2E',
-        cream: '#F9F7F2',
+        cream: '#F0F9F1',
       },
       fontFamily: {
         olChiki: ['"Noto Sans Ol Chiki"', 'sans-serif'],

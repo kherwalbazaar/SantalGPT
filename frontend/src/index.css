@@ -4,7 +4,7 @@
 
 body {
   font-family: 'Noto Sans Ol Chiki', sans-serif;
-  background-color: #F9F7F2;
+  background-color: #F0F9F1;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
@@ -18,7 +18,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F9F7F2;
+  background: #F0F9F1;
 }
 
 ::-webkit-scrollbar-thumb {

@@ -141,7 +141,7 @@ function App() {
 
   return (
     <ScriptProvider>
-      <div className="flex h-screen bg-cream overflow-hidden">
+      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#F0F9F1' }}>
         <BackgroundPattern />
         
         {/* Sidebar */}
