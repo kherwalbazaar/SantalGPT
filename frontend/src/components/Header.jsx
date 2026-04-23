@@ -8,7 +8,7 @@ export default function Header({ onToggleSidebar }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-cream shadow-md border-b border-earthyGreen/10">
+      <header className="fixed top-0 left-0 right-0 z-40 bg-cream shadow-md border-b border-earthyGreen/10 md:sticky md:relative">
         <div className="flex items-center justify-between px-4 py-3 md:px-6">
           {/* Left: Logo and Menu Button */}
           <div className="flex items-center gap-3">
