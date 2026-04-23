@@ -58,14 +58,14 @@ export default function AboutUs({ onBack }) {
         <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-earthyGreen rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-white font-bold text-3xl">ᱥ</span>
+            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4">
+              <img src="/santal-gpt.png" alt="SantalGPT" className="w-20 h-20 object-contain rounded-xl" />
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-earthyGreen font-olChiki mb-2">
               SantalGPT
             </h1>
-            <p className="text-gray-600 font-olChiki">
-              {scriptMode === 'olchiki' ? 'ᱟᱭᱟᱸ ᱞᱟᱹᱜᱤᱫ ᱥᱟᱱᱛᱟᱲ' : 'AI for the Santali'}
+            <p className="text-gray-600 -mt-2">
+              The Brain of Santal
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export default function AboutUs({ onBack }) {
             <h2 className="text-xl font-bold text-earthyGreen font-olChiki mb-4">
               {scriptMode === 'olchiki' ? 'ᱟᱢᱟᱸᱨ ᱵᱟᱵᱚᱛ' : 'About Us'}
             </h2>
-            <p className="text-gray-700 leading-relaxed text-justify font-olChiki text-lg">
+            <p className="text-gray-700 leading-relaxed text-justify font-olChiki text-base">
               {introductionContent}
             </p>
           </div>
