@@ -33,8 +33,8 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
       {messages.length === 0 ? (
         // Welcome Screen
         <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-          <div className="w-20 h-20 bg-earthyGreen/10 rounded-full flex items-center justify-center">
-            <MessageCircle className="w-10 h-10 text-earthyGreen" />
+          <div className="w-20 h-20 flex items-center justify-center">
+            <img src="/santal-gpt.png" alt="SantalGPT" className="w-20 h-20 object-contain rounded-full" />
           </div>
           
           <div className="space-y-2">
