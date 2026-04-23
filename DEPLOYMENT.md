@@ -18,15 +18,15 @@ Add the following environment variable:
 
 Alternatively, you can use `GOOGLE_AI_API_KEY` instead of `SantaliGPT`.
 
-### 2. Deploy to Vercel
+**Important**: After adding the environment variable, you must redeploy your project for the changes to take effect.
 
-If you haven't already, deploy your project to Vercel:
+### 2. Redeploy to Vercel
 
-```bash
-vercel
-```
+After adding the environment variable, redeploy:
 
-Or connect your GitHub repository to Vercel for automatic deployments.
+- Go to your Vercel project dashboard
+- Click "Redeploy" button in the Deployments tab
+- Or push a new commit to trigger automatic deployment
 
 ### 3. Verify Deployment
 
@@ -52,18 +52,20 @@ If you see a blank screen:
 If the API is not working:
 
 1. **Check Environment Variables**: Ensure `SantaliGPT` is set in Vercel
-2. **Check API Logs**: Go to Vercel dashboard → Functions → api/index.py → Logs
-3. **Test API Endpoint**: Try accessing `/chat` endpoint directly
-4. **Verify API Key**: Ensure your Gemini AI API key is valid
+2. **Redeploy After Adding Variables**: Environment variables require a redeploy to take effect
+3. **Check API Logs**: Go to Vercel dashboard → Functions → api/index.py → Logs
+4. **Test API Endpoint**: Try accessing `/chat` endpoint directly
+5. **Verify API Key**: Ensure your Gemini AI API key is valid
 
 ### API Returns Fallback Message
 
 If you see the fallback message "ᱤᱠᱟᱹ ᱠᱟᱹᱧ ᱢᱮ, ᱤᱧ ᱱᱤᱛᱚᱜ ᱠᱟᱹᱢᱤ ᱨᱮ ᱢᱤᱱᱟᱹᱧᱟ, ᱛᱷᱚᱲᱟ ᱜᱷᱟᱹᱲᱤᱡ ᱛᱟᱭᱚᱢ ᱟᱨᱦᱚᱸ ᱨᱚᱲ ᱢᱮ":
 
 This means the API is not responding. Check:
-1. API key is configured correctly
-2. Backend API is deployed and running
-3. API endpoint routing is correct
+1. API key is configured correctly in Vercel
+2. You have redeployed after adding the environment variable
+3. Backend API is deployed and running
+4. API endpoint routing is correct
 
 ## Local Development
 
@@ -79,3 +81,4 @@ For local development, the app uses `http://localhost:8000` for the API. Make su
 - **Backend**: FastAPI with Gemini AI deployed to Vercel
 - **API Endpoint**: `/chat` (handled by `api/index.py`)
 - **Routing**: Vercel handles both frontend and backend routing via `vercel.json`
+- **Environment Variables**: Backend now reads directly from Vercel environment variables (no .env file needed on Vercel)

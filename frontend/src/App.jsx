@@ -72,17 +72,13 @@ function App() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to get response from AI');
-      }
-
       const data = await response.json();
       
       if (!data.reply) {
         throw new Error('No reply from server');
       }
       
-      // Add AI response
+      // Add AI response (handles both success and error responses from backend)
       addMessage('ai', data.reply);
     } catch (error) {
       console.error('Error communicating with AI:', error);

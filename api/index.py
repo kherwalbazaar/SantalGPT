@@ -12,11 +12,13 @@ from pydantic import BaseModel
 API_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = API_DIR.parent
 
-# Load environment variables
-load_dotenv(API_DIR / ".env")
-load_dotenv(PROJECT_DIR / ".env")
+# Load environment variables from .env for local development
+# On Vercel, environment variables are set directly
+if not os.getenv("VERCEL"):
+    load_dotenv(API_DIR / ".env")
+    load_dotenv(PROJECT_DIR / ".env")
 
-# Get API key from environment
+# Get API key from environment (Vercel or .env)
 API_KEY = os.getenv("SantaliGPT") or os.getenv("GOOGLE_AI_API_KEY")
 if API_KEY:
     genai.configure(api_key=API_KEY)
@@ -69,10 +71,11 @@ def health():
 @app.post("/chat")
 async def chat(request: ChatRequest):
     if not API_KEY:
-        raise HTTPException(
-            status_code=500,
-            detail="Google AI API key is not configured. Add SantaliGPT or GOOGLE_AI_API_KEY in Vercel environment variables.",
-        )
+        return {
+            "status": "error",
+            "reply": "ᱤᱠᱟᱹ ᱠᱟᱹᱧ ᱢᱮ, ᱤᱧ ᱱᱤᱛᱚᱜ ᱠᱟᱹᱢᱤ ᱨᱮ ᱢᱤᱱᱟᱹᱧᱟ, ᱛᱷᱚᱲᱟ ᱜᱷᱟᱹᱲᱤᱡ ᱛᱟᱭᱚᱢ ᱟᱨᱦᱚᱸ ᱨᱚᱲ ᱢᱮ",
+            "error": "API key not configured"
+        }
 
     try:
         model = genai.GenerativeModel(model_name="gemini-1.5-flash")
@@ -87,4 +90,8 @@ async def chat(request: ChatRequest):
             "script": "Ol Chiki",
         }
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return {
+            "status": "error",
+            "reply": "ᱤᱠᱟᱹ ᱠᱟᱹᱧ ᱢᱮ, ᱤᱧ ᱱᱤᱛᱚᱜ ᱠᱟᱹᱢᱤ ᱨᱮ ᱢᱤᱱᱟᱹᱧᱟ, ᱛᱷᱚᱲᱟ ᱜᱷᱟᱹᱲᱤᱡ ᱛᱟᱭᱚᱢ ᱟᱨᱦᱚᱸ ᱨᱚᱲ ᱢᱮ",
+            "error": str(exc)
+        }
