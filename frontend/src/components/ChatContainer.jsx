@@ -43,7 +43,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
             </h2>
             <p className="text-gray-600 max-w-md font-olChiki">
               {scriptMode === 'olchiki'
-                ? 'ᱟᱯᱱᱟᱨ ᱫᱚ ᱥᱟᱱᱛᱟᱲ ᱥᱟᱶᱛᱟ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱮᱟᱭᱤ ᱾ ᱤᱧ ᱟᱯᱱᱟᱨ ᱪᱮᱫ ᱜᱚᱲᱚ ᱫᱟᱲᱮᱭᱟᱜ ᱟ?'
+                ? 'ᱤᱧ ᱫᱚ ᱥᱟᱱᱛᱟᱲ ᱥᱟᱶᱛᱟ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱮᱟᱭᱤ (AI) ᱠᱟᱹᱱᱟᱹᱧ ᱾ ᱤᱧ ᱟᱢ ᱪᱮᱫ ᱞᱮᱠᱟᱧ ᱜᱚᱲᱚ ᱟᱢ ᱫᱟᱲᱮᱭᱟᱜ-ᱟ?'
                 : 'I am an AI for the Santali community. How can I assist you today?'}
             </p>
           </div>
