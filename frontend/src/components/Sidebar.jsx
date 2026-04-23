@@ -46,7 +46,7 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
         <div className="flex-1 overflow-y-auto">
           <div className="p-4">
             <h3 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-              {scriptMode === 'olchiki' ? 'ᱥᱮᱫᱟᱭ ᱜᱟᱞᱢᱟᱨᱟᱣ' : 'Recent History'}
+              {scriptMode === 'olchiki' ? 'ᱞᱟᱦᱟ ᱛᱮᱱᱟᱜ ᱜᱟᱞᱢᱟᱨᱟᱣ' : 'Recent History'}
             </h3>
             
             <div className="space-y-0">
