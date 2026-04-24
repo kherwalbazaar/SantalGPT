@@ -12,11 +12,17 @@ export default function useChatHistory() {
       const storedChats = localStorage.getItem(CHATS_STORAGE_KEY);
       if (storedChats) {
         const parsedChats = JSON.parse(storedChats);
-        setChats(parsedChats);
+        
+        // Remove duplicate chats by ID (keep first occurrence)
+        const uniqueChats = parsedChats.filter((chat, index, self) =>
+          index === self.findIndex((c) => c.id === chat.id)
+        );
+        
+        setChats(uniqueChats);
         
         // Set current chat to the most recent one, or create new
-        if (parsedChats.length > 0) {
-          setCurrentChatId(parsedChats[0].id);
+        if (uniqueChats.length > 0) {
+          setCurrentChatId(uniqueChats[0].id);
         } else {
           createNewChat();
         }
@@ -38,7 +44,7 @@ export default function useChatHistory() {
 
   const createNewChat = () => {
     const newChat = {
-      id: Date.now().toString(),
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: 'ᱱᱟᱶᱟ ᱜᱟᱞᱢᱟᱨᱟᱣ', // "New Conversation" in Ol Chiki
       messages: [],
       createdAt: new Date().toISOString(),

@@ -19,7 +19,11 @@ if not os.getenv("VERCEL"):
     load_dotenv(PROJECT_DIR / ".env")
 
 # Get API key from environment (Vercel or .env)
-API_KEY = os.getenv("SantaliGPT") or os.getenv("GOOGLE_AI_API_KEY")
+API_KEY = (
+    os.getenv("GEMINI_API_KEY")
+    or os.getenv("GOOGLE_AI_API_KEY")
+    or os.getenv("SantaliGPT")
+)
 if API_KEY:
     genai.configure(api_key=API_KEY)
 
@@ -78,7 +82,7 @@ async def chat(request: ChatRequest):
         }
 
     try:
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name="gemini-2.5-flash")
         chat_session = model.start_chat(history=request.history)
         response = chat_session.send_message(
             f"{system_instruction}\n\nUser: {request.message}"

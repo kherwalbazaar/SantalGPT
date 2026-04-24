@@ -12,12 +12,18 @@ export function useScript() {
 
 export function ScriptProvider({ children }) {
   const [scriptMode, setScriptMode] = useState(() => {
+    if (typeof window === 'undefined') {
+      return 'olchiki';
+    }
+
     const saved = localStorage.getItem('santalgpt_script_mode');
     return saved || 'olchiki';
   });
 
   useEffect(() => {
-    localStorage.setItem('santalgpt_script_mode', scriptMode);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('santalgpt_script_mode', scriptMode);
+    }
   }, [scriptMode]);
 
   const toggleScript = () => {

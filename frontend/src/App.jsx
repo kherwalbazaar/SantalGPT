@@ -67,10 +67,8 @@ function App() {
   }, []);
 
   // API Configuration
-  // Use relative path for production (Vercel), localhost for development
-  // VITE_API_URL can be set to override for testing
-  const isDev = import.meta.env.DEV;
-  const API_BASE_URL = import.meta.env.VITE_API_URL || (isDev ? 'http://localhost:8000' : '');
+  // Use same-origin /api in production, or NEXT_PUBLIC_API_URL when explicitly provided.
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
   const handleEditMessage = (messageTimestamp, newContent) => {
     editMessage(messageTimestamp, newContent);
