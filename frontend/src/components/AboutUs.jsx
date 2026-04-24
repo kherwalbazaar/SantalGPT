@@ -11,7 +11,7 @@ export default function AboutUs({ onBack }) {
   const missionContent = scriptMode === 'olchiki' ? [
     {
       title: "ᱯᱟᱹᱨᱥᱤ ᱡᱤᱭᱟᱹᱲ",
-      description: "ᱥᱟᱱᱛᱟᱲᱤ ᱨᱚᱱᱚᱲ ᱟᱨ ᱚᱞ ᱪᱤᱠᱤ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱥᱟᱹᱨᱤ ᱰᱤᱡᱤᱴᱟଲ ᱜᱚᱲᱚᱭ ᱮᱢᱟ ᱾"
+      description: "ᱥᱟᱱᱛᱟᱲᱤ ᱨᱚᱱᱚᱲ ᱟᱨ ᱚᱞ ᱪᱤᱠᱤ ᱞᱟᱹᱜᱤᱫ ᱢᱤᱫ ᱥᱟᱹᱨᱤ ᱰᱤᱡᱤᱴᱟᱞ ᱜᱚᱲᱚᱭ ᱮᱢᱟ ᱾"
     },
     {
       title: "ᱞᱟᱠᱪᱟᱨ ᱡᱟᱣᱨᱟ",
@@ -54,56 +54,54 @@ export default function AboutUs({ onBack }) {
       </button>
 
       {/* About Content */}
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-lg p-8 md:p-12">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4">
-              <img src="/santal-gpt.png" alt="SantalGPT" className="w-20 h-20 object-contain rounded-xl" />
-            </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-earthyGreen font-olChiki mb-2">
-              SantalGPT
-            </h1>
-            <p className="text-gray-600 -mt-2">
-              The Brain of Santal
-            </p>
+      <div className="max-w-4xl mx-auto p-8 md:p-12">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-20 h-20 flex items-center justify-center mx-auto mb-4">
+            <img src="/santal-gpt.png" alt="SantalGPT" className="w-20 h-20 object-contain rounded-xl" />
           </div>
+          <h1 className="text-3xl md:text-4xl font-bold text-earthyGreen font-olChiki mb-2">
+            SantalGPT
+          </h1>
+          <p className="text-gray-600 -mt-2">
+            The Brain of Santal
+          </p>
+        </div>
 
-          {/* Introduction */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-earthyGreen font-olChiki mb-4">
-              {scriptMode === 'olchiki' ? 'ᱟᱢᱟᱸᱨ ᱵᱟᱵᱚᱛ' : 'About Us'}
-            </h2>
-            <p className="text-gray-700 leading-relaxed text-justify font-olChiki text-base">
-              {introductionContent}
-            </p>
-          </div>
+        {/* Introduction */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-earthyGreen font-olChiki mb-4">
+            {scriptMode === 'olchiki' ? 'ᱤᱧ ᱵᱟᱵᱚᱛ ᱛᱮ' : 'About Us'}
+          </h2>
+          <p className="text-gray-700 leading-relaxed text-justify font-olChiki text-base">
+            {introductionContent}
+          </p>
+        </div>
 
-          {/* Mission Section */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-earthyGreen font-olChiki mb-4">
-              {scriptMode === 'olchiki' ? 'ᱟᱞᱮᱭᱟᱜ ᱠᱟᱹᱢᱤ ᱦᱚᱨᱟ' : 'Our Mission'}
-            </h2>
-            <div className="space-y-4">
-              {missionContent.map((item, index) => (
-                <div key={index} className="p-4 bg-earthyGreen/5 rounded-lg border-l-4 border-earthyGreen">
-                  <h3 className="font-semibold text-earthyGreen font-olChiki mb-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-700 font-olChiki">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
-            </div>
+        {/* Mission Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-earthyGreen font-olChiki mb-4">
+            {scriptMode === 'olchiki' ? 'ᱟᱞᱮᱭᱟᱜ ᱠᱟᱹᱢᱤ ᱦᱚᱨᱟ' : 'Our Mission'}
+          </h2>
+          <div className="space-y-4">
+            {missionContent.map((item, index) => (
+              <div key={index} className="p-4 bg-earthyGreen/5 rounded-lg border-l-4 border-earthyGreen">
+                <h3 className="font-semibold text-earthyGreen font-olChiki mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-700 font-olChiki">
+                  {item.description}
+                </p>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* Team Statement */}
-          <div className="mt-8 p-6 bg-earthyGreen/10 rounded-xl border border-earthyGreen/20">
-            <p className="text-gray-700 italic font-olChiki text-center">
-              "{teamContent}"
-            </p>
-          </div>
+        {/* Team Statement */}
+        <div className="mt-8 p-6 bg-earthyGreen/10 rounded-xl border border-earthyGreen/20">
+          <p className="text-gray-700 italic font-olChiki text-center">
+            "{teamContent}"
+          </p>
         </div>
       </div>
     </div>

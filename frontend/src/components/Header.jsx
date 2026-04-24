@@ -47,7 +47,7 @@ export default function Header({ onToggleSidebar }) {
                 <ToggleRight className="w-5 h-5 text-earthyGreen" />
               )}
               <span className="text-sm font-medium text-earthyGreen hidden sm:inline">
-                {scriptMode === 'olchiki' ? 'ᱚᱞ ᱪᱤᱠᱤ' : 'Latin'}
+                {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲᱤ' : 'English'}
               </span>
             </button>
 

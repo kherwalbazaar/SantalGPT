@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Plus, Trash2, ExternalLink, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Plus, Trash2, ExternalLink, ChevronDown, ChevronUp, BookOpen, Home, History, Settings, Mail, Users } from 'lucide-react';
 import { useScript } from '../context/ScriptContext';
 import { learningResources, categories } from '../data/learningResources';
 
 export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, onSelectChat, onDeleteChat, onNewChat, onAboutClick, onHomeClick }) {
   const { scriptMode } = useScript();
   const [showResources, setShowResources] = useState(false);
+  const [showTools, setShowTools] = useState(false);
   const [activeCategory, setActiveCategory] = useState('all');
 
   const filteredResources = activeCategory === 'all'
@@ -28,56 +29,80 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
-        {/* New Chat Button */}
+        {/* Main Actions */}
         <div className="p-4 border-b border-earthyGreen/10">
           <button
             onClick={() => {
-              onHomeClick();
+              onNewChat();
               onClose();
             }}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-earthyGreen text-white rounded-xl hover:bg-earthyGreen/90 transition-colors font-olChiki"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-earthyGreen text-white rounded-xl hover:bg-earthyGreen/90 transition-colors font-olChiki shadow-md"
           >
             <Plus className="w-5 h-5" />
-            <span>{scriptMode === 'olchiki' ? 'ᱱᱟᱶᱟ ᱜᱟᱞᱢᱟᱨᱟᱣ' : 'New Chat'}</span>
+            <span>{scriptMode === 'olchiki' ? 'ᱱᱟᱶᱟ ᱨᱚᱯᱚᱲ' : 'New Chat'}</span>
           </button>
         </div>
 
-        {/* About Us Section */}
+        {/* Chat Activity */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4">
-            <h3 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide">
-              {scriptMode === 'olchiki' ? 'ᱟᱹᱣᱛᱟᱱ' : 'About'}
+            <h3 className="text-sm font-semibold text-gray-600 mb-3 uppercase tracking-wide flex items-center gap-2">
+              <History className="w-4 h-4" />
+              {scriptMode === 'olchiki' ? 'ᱱᱟᱜᱟᱢ' : 'History'}
             </h3>
             
-            <button
-              onClick={() => {
-                onAboutClick();
-                onClose();
-              }}
-              className="w-full flex items-center gap-3 p-4 rounded-lg bg-earthyGreen/10 border border-earthyGreen/30 hover:bg-earthyGreen/20 transition-colors"
-            >
-              <div className="w-10 h-10 bg-earthyGreen rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-lg">ᱥ</span>
-              </div>
-              <div className="text-left">
-                <p className="font-medium text-earthyGreen font-olChiki">
-                  {scriptMode === 'olchiki' ? 'ᱟᱢᱟᱸᱨ ᱵᱟᱵᱚᱛ' : 'About Us'}
+            <div>
+              {chatHistory.length > 0 ? (
+                chatHistory.map((chat) => (
+                  <div
+                    key={chat.id}
+                    className={`group flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors ${
+                      currentChatId === chat.id
+                        ? 'bg-earthyGreen/10 border border-earthyGreen/30'
+                        : 'hover:bg-gray-100 border border-transparent'
+                    }`}
+                    onClick={() => {
+                      onSelectChat(chat.id);
+                      onClose();
+                    }}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-800 font-olChiki truncate">
+                        {chat.title}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(chat.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteChat(chat.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-all"
+                      title={scriptMode === 'olchiki' ? 'ᱢᱮᱴᱟᱣ ᱢᱮ' : 'Delete'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-gray-500 text-center py-4 font-olChiki">
+                  {scriptMode === 'olchiki' ? 'ᱪᱷᱟᱹᱲ ᱵᱟᱹᱱᱩᱭᱟ' : 'No chats yet'}
                 </p>
-                <p className="text-xs text-gray-600 font-olChiki">
-                  {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲGPT ᱵᱟᱵᱚᱛ ᱛᱮᱫ' : 'Know about SantalGPT'}
-                </p>
-              </div>
-            </button>
+              )}
+            </div>
           </div>
 
-          {/* Learning Resources Section */}
+          {/* Knowledge & Resources */}
           <div className="border-t border-earthyGreen/10">
             <button
               onClick={() => setShowResources(!showResources)}
               className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
             >
-              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                {scriptMode === 'olchiki' ? 'ᱥᱤᱠᱱᱟᱹᱛ ᱡᱚᱱᱚᱲ' : 'Learning Resources'}
+              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide flex items-center gap-2">
+                <BookOpen className="w-4 h-4" />
+                {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲᱤ ᱥᱮᱪᱮᱫ' : 'Learn Santali'}
               </h3>
               {showResources ? (
                 <ChevronUp className="w-5 h-5 text-gray-600" />
@@ -132,6 +157,87 @@ export default function Sidebar({ isOpen, onClose, chatHistory, currentChatId, o
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Tools Section */}
+          <div className="border-t border-earthyGreen/10">
+            <button
+              onClick={() => setShowTools(!showTools)}
+              className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
+            >
+              <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wide flex items-center gap-2">
+                <Settings className="w-4 h-4" />
+                {scriptMode === 'olchiki' ? 'ᱥᱟᱯᱟᱵᱽ' : 'Tools'}
+              </h3>
+              {showTools ? (
+                <ChevronUp className="w-5 h-5 text-gray-600" />
+              ) : (
+                <ChevronDown className="w-5 h-5 text-gray-600" />
+              )}
+            </button>
+
+            {showTools && (
+              <div className="p-4 pt-0 space-y-2">
+                <a
+                  href="/ol-chiki-chart.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-3 bg-cream rounded-lg hover:shadow-md transition-all border border-earthyGreen/10 hover:border-earthyGreen/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">📝</span>
+                    <div>
+                      <h4 className="text-sm font-semibold text-earthyGreen font-olChiki">
+                        {scriptMode === 'olchiki' ? 'ᱚᱞ ᱪᱤᱠᱤ ᱪᱟᱨᱴ' : 'Ol Chiki Chart'}
+                      </h4>
+                      <p className="text-xs text-gray-600 font-olChiki">
+                        {scriptMode === 'olchiki' ? 'ᱚᱞ ᱪᱤᱠᱤ ᱪᱮᱫ ᱠᱟᱱᱟ' : 'Learn the alphabet'}
+                      </p>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            )}
+          </div>
+
+          {/* App Info */}
+          <div className="border-t border-earthyGreen/10 p-4 space-y-2">
+            <button
+              onClick={() => {
+                // Settings functionality can be added later
+                onClose();
+              }}
+              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <Settings className="w-5 h-5 text-gray-600" />
+              <span className="text-sm text-gray-700 font-olChiki">
+                {scriptMode === 'olchiki' ? 'ᱥᱟᱡᱟᱣ' : 'Settings'}
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                onAboutClick();
+                onClose();
+              }}
+              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <Users className="w-5 h-5 text-earthyGreen" />
+              <span className="text-sm text-gray-700 font-olChiki">
+                {scriptMode === 'olchiki' ? 'ᱟᱞᱮ ᱵᱟᱵᱚᱛ ᱛᱮ' : 'About Us'}
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                // Contact functionality can be added later
+                onClose();
+              }}
+              className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              <Mail className="w-5 h-5 text-gray-600" />
+              <span className="text-sm text-gray-700 font-olChiki">
+                {scriptMode === 'olchiki' ? 'ᱥᱟᱹᱜᱟᱹᱭ' : 'Contact'}
+              </span>
+            </button>
           </div>
         </div>
       </aside>

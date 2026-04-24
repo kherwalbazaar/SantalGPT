@@ -136,7 +136,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
   return (
     <>
       <div
-        className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fadeIn`}
+        className={`flex ${isUser ? 'justify-end ml-4' : 'justify-start'} mb-4 animate-fadeIn`}
         onTouchStart={handlePressStart}
         onTouchEnd={handlePressEnd}
         onTouchCancel={handlePressEnd}
@@ -148,7 +148,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
           className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-1 shadow-md relative ${
             isUser
               ? 'bg-gray-50 rounded-br-md'
-              : 'bg-gray-100 rounded-bl-md'
+              : 'bg-gray-100 rounded-bl-md -ml-4'
           } ${isUser && !('ontouchstart' in window) ? 'cursor-default' : ''}`}
         >
           {isEditing ? (
