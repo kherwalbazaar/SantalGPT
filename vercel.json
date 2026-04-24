@@ -1,12 +1,6 @@
 {
   "version": 2,
   "framework": "nextjs",
-  "buildCommand": "cd frontend && npm run build",
-  "outputDirectory": "frontend/.next",
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    }
-  ]
+  "rootDirectory": "frontend",
+  "outputDirectory": ".next"
 }
