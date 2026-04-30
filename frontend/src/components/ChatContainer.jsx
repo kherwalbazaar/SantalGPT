@@ -3,7 +3,7 @@ import MessageBubble from './MessageBubble';
 import { useScript } from '../context/ScriptContext';
 import { MessageCircle } from 'lucide-react';
 
-export default function ChatContainer({ messages, isLoading, onEditMessage, onEditMessageContent, onSuggestionClick }) {
+export default function ChatContainer({ messages, isLoading, onEditMessage, onEditMessageContent, onSuggestionClick, inputHasText }) {
   const { scriptMode } = useScript();
   const messagesEndRef = useRef(null);
 
@@ -82,9 +82,26 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
       ) : (
         // Messages List
         <>
-          {messages.map((message, index) => (
-            <MessageBubble key={index} message={message} onEdit={onEditMessage} onEditMessageContent={onEditMessageContent} />
-          ))}
+          {(() => {
+            // Find the last user message index
+            let lastUserMessageIndex = -1;
+            for (let i = messages.length - 1; i >= 0; i--) {
+              if (messages[i].role === 'user') {
+                lastUserMessageIndex = i;
+                break;
+              }
+            }
+            return messages.map((message, index) => (
+              <MessageBubble 
+                key={index} 
+                message={message} 
+                onEdit={onEditMessage} 
+                onEditMessageContent={onEditMessageContent}
+                isLastUserMessage={index === lastUserMessageIndex}
+                inputHasText={inputHasText}
+              />
+            ));
+          })()}
           
           {isLoading && (
             <div className="flex justify-start mb-4">

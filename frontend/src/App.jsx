@@ -9,15 +9,37 @@ import InputBar from './components/InputBar';
 import Sidebar from './components/Sidebar';
 import AboutUs from './components/AboutUs';
 
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://your-backend-url.vercel.app' 
+  : 'http://localhost:8000';
+
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [editValue, setEditValue] = useState(undefined);
   const [editingMessageTimestamp, setEditingMessageTimestamp] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [suggestionText, setSuggestionText] = useState('');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [inputHasText, setInputHasText] = useState(false);
+
+  // Initialize chat history
+  const {
+    messages,
+    addMessage,
+    editMessage,
+    deleteMessage,
+    currentChat,
+    chats,
+    currentChatId,
+    createNewChat,
+    loadChat,
+    deleteChat,
+    isLoading,
+    error,
+    clearError,
+  } = useChatHistory();
 
   // PWA Install Prompt
   useEffect(() => {
@@ -48,167 +70,176 @@ function App() {
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
       }
-      setShowInstallPrompt(false);
     }
   };
-  const {
-    currentChat,
-    addMessage,
-    editMessage,
-    createNewChat,
-    loadChat,
-    deleteChat,
-    getRecentChats,
-  } = useChatHistory();
 
-  // Set initialized state after hook loads
+  // Initialize app
   useEffect(() => {
     setIsInitialized(true);
   }, []);
 
-  // API Configuration
-  // Use same-origin /api in production, or NEXT_PUBLIC_API_URL when explicitly provided.
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
-  const handleEditMessage = (messageTimestamp, newContent) => {
-    editMessage(messageTimestamp, newContent);
-  };
-
-  const handleEditMessageContent = (content, timestamp) => {
-    setEditValue(content);
-    setEditingMessageTimestamp(timestamp);
-  };
-
-  const handleSuggestionClick = (text) => {
-    setEditValue(text);
-  };
-
   const handleSendMessage = async (message) => {
     // If editing, delete the specific message being edited
     if (editValue !== undefined && editingMessageTimestamp !== null) {
-      deleteChat(editingMessageTimestamp);
+      deleteMessage(editingMessageTimestamp);
       setEditValue(undefined);
       setEditingMessageTimestamp(null);
     }
 
     // Add user message
     addMessage('user', message);
-    setIsLoading(true);
 
-    try {
-      // Send message to backend API
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message,
-          history: [], // Can be extended to include conversation history
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (!data.reply) {
-        throw new Error('No reply from server');
-      }
-      
-      // Add AI response (handles both success and error responses from backend)
-      addMessage('ai', data.reply);
-    } catch (error) {
-      console.error('Error communicating with AI:', error);
-      // Fallback response when API is not working
+    // Fallback response - backend not configured
+    setTimeout(() => {
       addMessage('ai', 'ᱤᱠᱟᱹ ᱠᱟᱹᱧ ᱢᱮ, ᱤᱧ ᱱᱤᱛᱚᱜ ᱠᱟᱹᱢᱤ ᱨᱮ ᱢᱤᱱᱟᱹᱧᱟ, ᱛᱷᱚᱲᱟ ᱜᱷᱟᱹᱲᱤᱡ ᱛᱟᱭᱚᱢ ᱟᱨᱦᱚᱸ ᱨᱚᱲ ᱢᱮ');
-    } finally {
-      setIsLoading(false);
-    }
+    }, 1000);
+    
+    // Clear suggestion text after sending
+    setSuggestionText('');
   };
 
-  // Don't render until initialized
+  const handleNewChat = () => {
+    createNewChat();
+  };
+
+  const handleSelectChat = (chatId) => {
+    loadChat(chatId);
+    setSidebarOpen(false);
+  };
+
+  const handleDeleteChat = (chatId) => {
+    deleteChat(chatId);
+  };
+
+  const handleEditMessage = (content, timestamp) => {
+    setEditValue(content);
+    setEditingMessageTimestamp(timestamp);
+    setInputHasText(true); // Set to true since we're editing with content
+  };
+
+  const handleSuggestionClick = (text) => {
+    setSuggestionText(text);
+  };
+
   if (!isInitialized) {
     return (
-      <div className="flex items-center justify-center h-screen bg-cream">
+      <div className="min-h-screen bg-cream flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="w-12 h-12 border-4 border-earthyGreen border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading SantalGPT...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <ScriptProvider>
-      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#F0F9F1' }}>
-        <BackgroundPattern />
-        
+    <div className="min-h-screen bg-cream relative overflow-hidden">
+      <BackgroundPattern />
+      
+      {/* Install Prompt */}
+      {showInstallPrompt && (
+        <div className="fixed top-4 left-4 right-4 z-50 bg-white rounded-lg shadow-lg p-4 border border-earthyGreen/20">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-earthyGreen">Install SantalGPT</p>
+              <p className="text-sm text-gray-600">Get the app experience on your device</p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowInstallPrompt(false)}
+                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+              >
+                Not now
+              </button>
+              <button
+                onClick={handleInstallClick}
+                className="px-4 py-1 text-sm bg-earthyGreen text-white rounded hover:bg-earthyGreen/90"
+              >
+                Install
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {error && (
+        <div className="fixed top-4 right-4 z-50 bg-red-50 border border-red-200 rounded-lg p-3 max-w-sm">
+          <div className="flex items-start gap-2">
+            <X className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-red-800 text-sm font-medium">Error</p>
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+            <button
+              onClick={clearError}
+              className="text-red-500 hover:text-red-700"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Main App */}
+      <div className="flex h-screen">
         {/* Sidebar */}
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          chatHistory={getRecentChats()}
-          currentChatId={currentChat?.id}
-          onSelectChat={loadChat}
-          onDeleteChat={deleteChat}
-          onNewChat={createNewChat}
+          chatHistory={chats}
+          currentChatId={currentChatId}
+          onSelectChat={handleSelectChat}
+          onDeleteChat={handleDeleteChat}
+          onNewChat={handleNewChat}
           onAboutClick={() => setShowAbout(true)}
           onHomeClick={() => setShowAbout(false)}
         />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col min-w-0 relative z-10">
-          <Header onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <div className="flex-1 flex flex-col">
+          <Header
+            onToggleSidebar={() => setSidebarOpen(true)}
+          />
           
-          {showAbout ? (
-            <AboutUs onBack={() => setShowAbout(false)} />
-          ) : (
-            <>
-              <div className="flex-1 overflow-y-auto">
-                <div className="max-w-4xl mx-auto p-4">
-                  <ChatContainer
-                    messages={currentChat?.messages || []}
-                    isLoading={isLoading}
-                    onEditMessage={handleEditMessage}
-                    onEditMessageContent={handleEditMessageContent}
-                    onSuggestionClick={handleSuggestionClick}
-                  />
-                </div>
-              </div>
-              
-              <InputBar onSendMessage={handleSendMessage} initialValue={editValue} />
-            </>
-          )}
+          <ChatContainer
+            messages={messages || []}
+            isLoading={isLoading}
+            editValue={editValue}
+            editingMessageTimestamp={editingMessageTimestamp}
+            onEditMessage={handleEditMessage}
+            onSuggestionClick={handleSuggestionClick}
+            inputHasText={inputHasText}
+          />
+          
+          <InputBar
+            onSendMessage={handleSendMessage}
+            isLoading={isLoading}
+            editValue={editValue}
+            setEditValue={setEditValue}
+            editingMessageTimestamp={editingMessageTimestamp}
+            setEditingMessageTimestamp={setEditingMessageTimestamp}
+            initialValue={editValue}
+            suggestion={suggestionText}
+            onInputChange={setInputHasText}
+          />
         </div>
-
-        {/* PWA Install Prompt */}
-        {showInstallPrompt && (
-          <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-80 bg-white rounded-xl shadow-2xl p-4 z-50 border border-earthyGreen/20">
-            <div className="flex items-start gap-3">
-              <img src="/santal-gpt.png" alt="SantalGPT" className="w-12 h-12 rounded-lg" />
-              <div className="flex-1">
-                <h3 className="font-semibold text-earthyGreen font-olChiki">Install SantalGPT</h3>
-                <p className="text-sm text-gray-600 font-olChiki mt-1">
-                  Install app for better experience
-                </p>
-              </div>
-              <button
-                onClick={() => setShowInstallPrompt(false)}
-                className="text-gray-400 hover:text-gray-600 p-1"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <button
-              onClick={handleInstallClick}
-              className="w-full mt-3 bg-earthyGreen text-white py-2 rounded-lg font-olChiki hover:bg-earthyGreen/90 transition-colors"
-            >
-              Install
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* About Modal */}
+      {showAbout && (
+        <AboutUs onClose={() => setShowAbout(false)} />
+      )}
+    </div>
+  );
+}
+
+function AppWrapper() {
+  return (
+    <ScriptProvider>
+      <App />
     </ScriptProvider>
   );
 }
 
-export default App;
+export default AppWrapper;

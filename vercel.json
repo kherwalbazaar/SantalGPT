@@ -1,6 +1,40 @@
 {
   "version": 2,
-  "framework": "nextjs",
-  "rootDirectory": "frontend",
-  "outputDirectory": ".next"
+  "builds": [
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "outputDirectory": ".next"
+      }
+    },
+    {
+      "src": "backend/main.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.12",
+        "maxLambdaSize": "15mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/$1"
+    }
+  ],
+  "env": {
+    "GOOGLE_AI_API_KEY": "@google_ai_api_key",
+    "JWT_SECRET_KEY": "@jwt_secret_key",
+    "FIREBASE_SERVICE_ACCOUNT": "@firebase_service_account"
+  },
+  "functions": {
+    "backend/main.py": {
+      "maxDuration": 30
+    }
+  }
 }

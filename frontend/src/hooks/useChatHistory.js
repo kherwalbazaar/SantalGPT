@@ -129,6 +129,22 @@ export default function useChatHistory() {
     });
   };
 
+  const deleteMessage = (messageTimestamp) => {
+    setChats(prev => {
+      const updatedChats = prev.map(chat => {
+        if (chat.id === currentChatId) {
+          const updatedMessages = chat.messages.filter(
+            msg => msg.timestamp !== messageTimestamp
+          );
+          return { ...chat, messages: updatedMessages };
+        }
+        return chat;
+      });
+      
+      return updatedChats;
+    });
+  };
+
   const getCurrentChat = () => {
     return chats.find(chat => chat.id === currentChatId) || null;
   };
@@ -137,15 +153,23 @@ export default function useChatHistory() {
     return chats.slice(0, 10); // Return last 10 chats
   };
 
+  const currentChat = getCurrentChat();
+  const messages = currentChat?.messages || [];
+
   return {
     chats,
     currentChatId,
-    currentChat: getCurrentChat(),
+    currentChat,
+    messages,
     addMessage,
     editMessage,
+    deleteMessage,
     createNewChat,
     loadChat,
     deleteChat,
     getRecentChats,
+    isLoading: false,
+    error: null,
+    clearError: () => {},
   };
 }

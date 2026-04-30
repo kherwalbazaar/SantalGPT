@@ -3,7 +3,7 @@ import { ThumbsUp, ThumbsDown, Copy } from 'lucide-react';
 
 const LIKES_STORAGE_KEY = 'santalgpt_message_likes';
 
-export default function MessageBubble({ message, onEdit, onEditMessage }) {
+export default function MessageBubble({ message, onEdit, onEditMessage, isLastUserMessage, inputHasText }) {
   const isUser = message.role === 'user';
   const [showEditMenu, setShowEditMenu] = useState(false);
   const [editText, setEditText] = useState(message.content);
@@ -55,8 +55,8 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
 
   // Long press handlers for mobile ONLY
   const handlePressStart = (e) => {
-    // Only enable long press on touch devices
-    if (!isUser || !('ontouchstart' in window)) return;
+    // Only enable long press on touch devices and only for last user message
+    if (!isLastUserMessage || !isUser || !('ontouchstart' in window)) return;
     
     const timer = setTimeout(() => {
       setShowEditMenu(true);
@@ -74,7 +74,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
 
   // Hover handlers for desktop
   const handleMouseEnter = () => {
-    if (isUser && !('ontouchstart' in window)) {
+    if (isLastUserMessage && isUser && !('ontouchstart' in window)) {
       setShowHoverMenu(true);
     }
   };
@@ -108,15 +108,40 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
   const handleCopyMessage = async () => {
     try {
       await navigator.clipboard.writeText(message.content);
-      // Optional: Show a brief toast notification
-      const toast = document.createElement('div');
-      toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-earthyGreen text-white px-4 py-2 rounded-lg shadow-lg z-50 font-olChiki text-sm';
-      toast.textContent = 'Copied!';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2000);
+      showCopyToast('Copied!');
     } catch (err) {
-      console.error('Failed to copy:', err);
+      // Fallback for browsers where clipboard API fails
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = message.content;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        textArea.style.top = '0';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+          showCopyToast('Copied!');
+        } else {
+          showCopyToast('Copy failed', true);
+        }
+      } catch (fallbackErr) {
+        console.error('Failed to copy:', fallbackErr);
+        showCopyToast('Copy failed', true);
+      }
     }
+  };
+
+  const showCopyToast = (text, isError = false) => {
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-20 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg z-50 font-olChiki text-sm ${isError ? 'bg-red-500' : 'bg-earthyGreen'} text-white`;
+    toast.textContent = text;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
   };
 
   const handleLike = () => {
@@ -240,7 +265,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage }) {
                   >
                     <Copy size={14} />
                   </button>
-                  {isUser && !('ontouchstart' in window) && (
+                  {isLastUserMessage && isUser && !inputHasText && !('ontouchstart' in window) && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();

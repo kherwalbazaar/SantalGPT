@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Plus, X, Edit3, Camera, Image, FileText, Brain, Search, Mic, MicOff } from 'lucide-react';
 import { useScript } from '../context/ScriptContext';
 
-export default function InputBar({ onSendMessage, initialValue }) {
+export default function InputBar({ onSendMessage, initialValue, suggestion, onInputChange }) {
   const { scriptMode } = useScript();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -13,7 +13,7 @@ export default function InputBar({ onSendMessage, initialValue }) {
   const recognitionRef = useRef(null);
   const menuRef = useRef(null);
 
-  // Update message when initialValue changes
+  // Update message when initialValue changes (for editing)
   useEffect(() => {
     if (initialValue !== undefined) {
       setMessage(initialValue);
@@ -23,6 +23,21 @@ export default function InputBar({ onSendMessage, initialValue }) {
       setIsEditing(false);
     }
   }, [initialValue]);
+
+  // Update message when suggestion changes (for suggestions, not editing)
+  useEffect(() => {
+    if (suggestion !== undefined && suggestion !== '') {
+      setMessage(suggestion);
+      inputRef.current?.focus();
+    }
+  }, [suggestion]);
+
+  // Notify parent when message changes
+  useEffect(() => {
+    if (onInputChange) {
+      onInputChange(message.trim().length > 0);
+    }
+  }, [message, onInputChange]);
 
   const handleCancelEdit = () => {
     setMessage('');
