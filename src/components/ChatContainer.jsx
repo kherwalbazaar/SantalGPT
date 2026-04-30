@@ -96,6 +96,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
                 key={index} 
                 message={message} 
                 onEdit={onEditMessage} 
+                onEditMessage={onEditMessage}
                 onEditMessageContent={onEditMessageContent}
                 isLastUserMessage={index === lastUserMessageIndex}
                 inputHasText={inputHasText}

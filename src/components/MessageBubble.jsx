@@ -98,6 +98,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage, isLastUs
   };
 
   const handleStartEdit = () => {
+    console.log('handleStartEdit called', { onEditMessage, isLastUserMessage, isUser, inputHasText });
     if (onEditMessage) {
       onEditMessage(message.content, message.timestamp);
     }
@@ -173,7 +174,7 @@ export default function MessageBubble({ message, onEdit, onEditMessage, isLastUs
           className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-4 py-1 shadow-md relative ${
             isUser
               ? 'bg-gray-50 rounded-br-md'
-              : 'bg-gray-100 rounded-bl-md -ml-4'
+              : 'bg-gray-100 rounded-bl-md -ml-2'
           } ${isUser && !('ontouchstart' in window) ? 'cursor-default' : ''}`}
         >
           {isEditing ? (
@@ -265,7 +266,11 @@ export default function MessageBubble({ message, onEdit, onEditMessage, isLastUs
                   >
                     <Copy size={14} />
                   </button>
-                  {isLastUserMessage && isUser && !inputHasText && !('ontouchstart' in window) && (
+                  {(() => {
+                    const shouldShow = isLastUserMessage && isUser && !inputHasText && !('ontouchstart' in window);
+                    console.log('Edit button visibility check', { isLastUserMessage, isUser, inputHasText, isTouch: 'ontouchstart' in window, shouldShow });
+                    return shouldShow;
+                  })() && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
