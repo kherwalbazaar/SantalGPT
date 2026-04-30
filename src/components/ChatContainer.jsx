@@ -39,7 +39,7 @@ export default function ChatContainer({ messages, isLoading, onEditMessage, onEd
           
           <div className="space-y-2">
             <h2 className="text-2xl md:text-3xl font-bold text-earthyGreen font-olChiki">
-              {scriptMode === 'olchiki' ? 'ᱥᱟᱱᱛᱟᱲᱜᱤᱯᱤᱴᱤ ᱨᱮ ᱥᱟᱹᱜᱩᱱ ᱫᱟᱨᱟᱢ' : 'Welcome to SantalGPT'}
+              {scriptMode === 'olchiki' ? 'SantaliGPT ᱨᱮ ᱥᱟᱹᱜᱩᱱ ᱫᱟᱨᱟᱢ' : 'Welcome to SantalGPT'}
             </h2>
             <p className="text-gray-600 max-w-md font-olChiki">
               {scriptMode === 'olchiki'
