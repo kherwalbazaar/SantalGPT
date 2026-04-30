@@ -227,9 +227,8 @@ export default function InputBar({ onSendMessage, initialValue, suggestion, onIn
                   </button>
                 </div>
               )}
-              <input
+              <textarea
                 ref={inputRef}
-                type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
@@ -238,10 +237,20 @@ export default function InputBar({ onSendMessage, initialValue, suggestion, onIn
                     ? 'ᱱᱚᱸᱰᱮ ᱠᱩᱠᱞᱤ ᱚᱞ ᱢᱮ...'
                     : 'Write your question here...'
                 }
-                className={`w-full px-4 py-3 bg-white border-2 rounded-xl focus:border-earthyGreen focus:outline-none transition-colors font-olChiki text-sm md:text-base ${
+                className={`w-full px-4 py-3 bg-white border-2 rounded-xl focus:border-earthyGreen focus:outline-none transition-colors font-olChiki text-sm md:text-base resize-none ${
                   isEditing ? 'border-terracotta/50' : 'border-earthyGreen/20'
                 } pr-12`}
                 disabled={isRecording}
+                rows={1}
+                style={{ minHeight: '40px', maxHeight: '200px', overflowY: 'auto' }}
+                onInput={(e) => {
+                  if (e.target.value === '') {
+                    e.target.style.height = '40px';
+                  } else {
+                    e.target.style.height = 'auto';
+                    e.target.style.height = Math.min(e.target.scrollHeight, 200) + 'px';
+                  }
+                }}
               />
               {/* Mic Button Inside Input */}
               {isSupported && (
